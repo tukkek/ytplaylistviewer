@@ -19,6 +19,10 @@ from googleapiclient.errors import HttpError
 from google_auth_oauthlib.flow import InstalledAppFlow
 from oauth2client.file import Storage
 
+if len(sys.argv)<2:
+  raise Exception('Usage: ytplaylistviewer.py playlist [playlist...]'
+    '\nBoth playlist IDs and URLs accepted as parameters.')
+
 def get_authenticated_service():
   flow=InstalledAppFlow.from_client_secrets_file("client_secret.json", ['https://www.googleapis.com/auth/youtube.force-ssl'])
   storage = Storage('credentials.storage')
@@ -64,9 +68,13 @@ def go():
         print('Usage: ./ytplaylistviewer.py playlistId [playlistId playlistId ...]')
         sys.exit(1)
     for target in sys.argv[1:]:
+      if 'list=' in target:
+        target=target[target.index('list=')+len('list='):]
+        if '&' in target:
+          target=target[:target.index('&')]
       for pl in pages(playlistsservice,playlistsservice.list(part='id,snippet',maxResults=MAXRESULTS,id=target)):
         title=pl['snippet']['title']
-        print('expand='+str(len(videosids))+' results='+str(len(videosids))+' now: '+title)
+        print(title)
         playlistitems=service.playlistItems()
         count=0
         for video in pages(playlistitems,playlistitems.list(part='snippet',playlistId=pl['id'],maxResults=MAXRESULTS)):
