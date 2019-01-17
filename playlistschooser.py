@@ -1,7 +1,6 @@
 #!/usr/bin/python3
-import os,google.oauth2.credentials,subprocess
+import subprocess
 from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
 from google_auth_oauthlib.flow import InstalledAppFlow
 from oauth2client.file import Storage
 
